@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroHack ENEM - Sistema de Aprovação Neurológica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F4D03F;
+            --gold-dark: #B8860B;
+            --black: #000000;
+            --black-light: #0a0a0a;
+            --black-card: #111111;
+            --gray: #1a1a1a;
+            --text-white: #ffffff;
+            --text-gray: #cccccc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-white);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: var(--black);
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Melhorias para touch em mobile */
+        a, button {
+            -webkit-tap-highlight-color: rgba(212, 175, 55, 0.3);
+            touch-action: manipulation;
+        }
+
+        /* Header Fixo */
+        .header-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            z-index: 1000;
+            padding: 20px 40px;
+            transition: all 0.3s ease;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .countdown-header {
+            font-weight: 600;
+            color: var(--gold);
+            font-size: 16px;
+            letter-spacing: 1px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .countdown-header span {
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--gold-light);
+        }
+
+        .btn-header {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+            color: var(--black);
+            padding: 14px 32px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5);
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 90px;
+            background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
+            color: var(--text-white);
+            padding: 120px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            color: var(--text-white);
+            letter-spacing: -1px;
+        }
+
+        .hero h1 .highlight {
+            color: var(--gold);
+            display: block;
+            margin-top: 10px;
+        }
+
+        .hero .subheadline {
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 40px;
+            color: var(--text-gray);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        .proof-social {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            margin: 50px 0;
+            font-size: 16px;
+        }
+
+        .proof-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-gray);
+        }
+
+        .proof-item .icon {
+            color: var(--gold);
+            font-size: 20px;
+        }
+
+        .video-container {
+            max-width: 900px;
+            margin: 60px auto;
+            aspect-ratio: 16/9;
+            background: var(--black-card);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .video-container:hover {
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+            color: var(--black);
+            padding: 20px 50px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 40px;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.6);
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+        }
+
+        /* Seções Gerais */
+        .section {
+            padding: 100px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-alt {
+            background: var(--black-light);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-white);
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 20px;
+            color: var(--text-gray);
+            margin-bottom: 60px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+
+        .section-title .gold {
+            color: var(--gold);
+        }
+
+        /* Seção Problema */
+        .problem-list {
+            list-style: none;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .problem-item {
+            display: flex;
+            align-items: start;
+            gap: 20px;
+            margin-bottom: 25px;
+            font-size: 18px;
+            padding: 25px 30px;
+            background: var(--black-card);
+            border-radius: 10px;
+            border-left: 3px solid var(--gold);
+            transition: all 0.3s ease;
+            color: var(--text-gray);
+        }
+
+        .problem-item:hover {
+            transform: translateX(10px);
+            border-left-color: var(--gold-light);
+            background: var(--gray);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.1);
+        }
+
+        .problem-icon {
+            color: var(--gold);
+            font-size: 24px;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, var(--black-card) 0%, var(--gray) 100%);
+            color: var(--text-white);
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 50px auto;
+            max-width: 700px;
+            font-size: 22px;
+            font-weight: 500;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .stat-box:hover::before {
+            left: 100%;
+        }
+
+        .stat-box strong {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* Cards Modernos */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .benefit-card {
+            background: var(--black-card);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+        }
+
+        .benefit-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .benefit-card .icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover .icon-wrapper {
+            background: rgba(212, 175, 55, 0.2);
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .benefit-card .icon {
+            font-size: 32px;
+            color: var(--gold);
+        }
+
+        .benefit-card h3 {
+            color: var(--text-white);
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .benefit-card p {
+            color: var(--text-gray);
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .benefit-card .highlight {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 18px;
+            display: block;
+            margin-top: 10px;
+        }
+
+        /* Seção Resultados */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .testimonial-card {
+            background: var(--black-card);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+        }
+
+        .stars {
+            color: var(--gold);
+            font-size: 24px;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 25px;
+            font-size: 17px;
+            color: var(--text-gray);
+            line-height: 1.8;
+        }
+
+        .testimonial-author {
+            font-weight: 700;
+            color: var(--gold);
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            background: var(--black-card);
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .stat-card:hover::after {
+            opacity: 1;
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        /* Seção Conteúdo */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .content-card {
+            background: var(--black-card);
+            padding: 35px;
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+        }
+
+        .content-card h3 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-card h3::before {
+            content: '✓';
+            width: 28px;
+            height: 28px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .content-card p {
+            color: var(--text-gray);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .price-comparison {
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .old-price {
+            text-decoration: line-through;
+            color: var(--text-gray);
+            font-size: 28px;
+            font-weight: 400;
+            opacity: 0.6;
+        }
+
+        .new-price {
+            color: var(--gold);
+            font-size: 72px;
+            font-weight: 900;
+            margin: 20px 0;
+            font-family: 'Playfair Display', serif;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Seção Oferta */
+        .offer-section {
+            background: linear-gradient(180deg, var(--black) 0%, var(--black-light) 100%);
+            color: var(--text-white);
+            text-align: center;
+            padding: 100px 40px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .bonus-list {
+            list-style: none;
+            max-width: 700px;
+            margin: 40px auto;
+            text-align: left;
+        }
+
+        .bonus-item {
+            padding: 20px 25px;
+            margin-bottom: 15px;
+            background: var(--black-card);
+            border-radius: 10px;
+            font-size: 17px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+            color: var(--text-gray);
+        }
+
+        .bonus-item:hover {
+            border-color: var(--gold);
+            transform: translateX(5px);
+            background: var(--gray);
+        }
+
+        /* Seção Garantia */
+        .guarantee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .guarantee-card {
+            background: var(--black-card);
+            padding: 50px;
+            border-radius: 12px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guarantee-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .guarantee-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.25);
+        }
+
+        .guarantee-card:hover::before {
+            opacity: 1;
+        }
+
+        .guarantee-icon {
+            font-size: 64px;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+        }
+
+        .guarantee-card h3 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: var(--gold);
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .guarantee-card p {
+            font-size: 17px;
+            color: var(--text-gray);
+            line-height: 1.8;
+        }
+
+        /* Seção Urgência */
+        .urgency-section {
+            background: var(--black);
+            color: var(--text-white);
+            text-align: center;
+            padding: 80px 40px;
+            border-top: 2px solid var(--gold);
+            border-bottom: 2px solid var(--gold);
+            position: relative;
+        }
+
+        .urgency-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .urgency-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 30px;
+            color: var(--text-white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .urgency-title .gold {
+            color: var(--gold);
+        }
+
+        .spots-counter {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 30px 0;
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .countdown-large {
+            font-size: 48px;
+            font-weight: 900;
+            margin: 40px 0;
+            color: var(--gold-light);
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 2px;
+        }
+
+        /* FAQ */
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: var(--black-card);
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: var(--gold);
+        }
+
+        .faq-question {
+            padding: 25px 30px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--black-card);
+            color: var(--text-white);
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: var(--gray);
+            color: var(--gold);
+        }
+
+        .faq-question span:last-child {
+            font-size: 24px;
+            color: var(--gold);
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-question span:last-child {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            padding: 0 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            color: var(--text-gray);
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 25px 30px;
+            max-height: 500px;
+        }
+
+        /* CTA Final */
+        .cta-final {
+            background: linear-gradient(180deg, var(--black) 0%, var(--black-light) 100%);
+            color: var(--text-white);
+            text-align: center;
+            padding: 120px 40px;
+            border-top: 2px solid var(--gold);
+            position: relative;
+        }
+
+        .cta-final::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            font-weight: 900;
+            margin-bottom: 30px;
+            color: var(--text-white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-title .gold {
+            color: var(--gold);
+        }
+
+        .btn-giant {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+            color: var(--black);
+            padding: 25px 70px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 22px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 40px 0;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-giant:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(212, 175, 55, 0.6);
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+        }
+
+        .security-badges {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            font-size: 14px;
+            color: var(--text-gray);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--black);
+            color: var(--text-gray);
+            padding: 60px 40px;
+            text-align: center;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .footer-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            /* Header Mobile */
+            .header-fixed {
+                padding: 15px 20px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .countdown-header {
+                font-size: 14px;
+            }
+
+            .countdown-header span {
+                font-size: 16px;
+            }
+
+            .btn-header {
+                padding: 12px 25px;
+                font-size: 13px;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            /* Hero Mobile */
+            .hero {
+                margin-top: 120px;
+                padding: 60px 20px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+                line-height: 1.3;
+            }
+
+            .hero h1 .highlight {
+                font-size: 24px;
+                margin-top: 15px;
+            }
+
+            .hero .subheadline {
+                font-size: 18px;
+            }
+
+            .proof-social {
+                flex-direction: column;
+                gap: 15px;
+                margin: 30px 0;
+            }
+
+            .proof-item {
+                font-size: 14px;
+            }
+
+            .video-container {
+                margin: 40px auto;
+            }
+
+            .btn-primary {
+                padding: 18px 35px;
+                font-size: 16px;
+                width: 100%;
+                max-width: 350px;
+            }
+
+            /* Seções Mobile */
+            .section {
+                padding: 60px 20px;
+            }
+
+            .section-title {
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+
+            .section-subtitle {
+                font-size: 16px;
+                margin-bottom: 40px;
+            }
+
+            /* Cards Mobile */
+            .benefits-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 25px 15px;
+            }
+
+            .stat-number {
+                font-size: 40px;
+            }
+
+            .stat-label {
+                font-size: 13px;
+            }
+
+            .guarantee-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .guarantee-card {
+                padding: 30px 20px;
+            }
+
+            /* Problema Mobile */
+            .problem-item {
+                padding: 20px;
+                font-size: 16px;
+            }
+
+            .stat-box {
+                padding: 30px 20px;
+                font-size: 18px;
+            }
+
+            /* Preços Mobile */
+            .new-price {
+                font-size: 48px;
+            }
+
+            .old-price {
+                font-size: 22px;
+            }
+
+            /* Botões Mobile */
+            .btn-giant {
+                font-size: 16px;
+                padding: 20px 30px;
+                width: 100%;
+                max-width: 350px;
+            }
+
+            /* CTA Final Mobile */
+            .cta-final {
+                padding: 80px 20px;
+            }
+
+            .cta-title {
+                font-size: 32px;
+            }
+
+            /* Urgência Mobile */
+            .urgency-title {
+                font-size: 28px;
+            }
+
+            .countdown-large {
+                font-size: 32px;
+            }
+
+            .spots-counter {
+                font-size: 24px;
+            }
+
+            /* FAQ Mobile */
+            .faq-question {
+                padding: 20px;
+                font-size: 16px;
+            }
+
+            .faq-answer {
+                font-size: 15px;
+            }
+
+            /* Cards especiais Mobile */
+            .benefit-card {
+                padding: 30px 20px;
+            }
+
+            .benefit-card h3 {
+                font-size: 18px;
+            }
+
+            .content-card {
+                padding: 25px 20px;
+            }
+
+            .testimonial-card {
+                padding: 30px 20px;
+            }
+
+            /* Cards grandes Mobile */
+            div[style*="max-width: 1000px"],
+            div[style*="max-width: 900px"],
+            div[style*="max-width: 800px"] {
+                padding: 30px 20px !important;
+            }
+
+            div[style*="padding: 50px"] {
+                padding: 30px 20px !important;
+            }
+
+            div[style*="padding: 40px"] {
+                padding: 25px 20px !important;
+            }
+
+            /* Grids especiais Mobile */
+            div[style*="grid-template-columns: repeat(auto-fit"] {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Textos Mobile */
+            h3[style*="font-size: 36px"],
+            h3[style*="font-size: 32px"] {
+                font-size: 24px !important;
+            }
+
+            p[style*="font-size: 24px"],
+            p[style*="font-size: 22px"],
+            p[style*="font-size: 20px"] {
+                font-size: 16px !important;
+            }
+
+            /* Security badges Mobile */
+            .security-badges {
+                flex-direction: column;
+                gap: 15px;
+                font-size: 12px;
+            }
+
+            /* Footer Mobile */
+            .footer {
+                padding: 40px 20px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* Mobile muito pequeno */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .hero h1 .highlight {
+                font-size: 20px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .new-price {
+                font-size: 40px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .countdown-large {
+                font-size: 24px;
+            }
+
+            /* Melhorias adicionais para telas muito pequenas */
+            .hero h1 br {
+                display: block;
+            }
+
+            blockquote {
+                font-size: 16px !important;
+                padding: 20px !important;
+            }
+
+            /* Garantir que botões sejam tocáveis */
+            .btn-header,
+            .btn-primary,
+            .btn-giant {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+
+        /* Animações */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Fixo -->
+    <header class="header-fixed">
+        <div class="header-content">
+            <div class="logo">NeuroHack</div>
+            <div class="countdown-header">
+                ⏰ OFERTA EXPIRA EM: <span id="countdown-header">01:59:59</span>
+            </div>
+            <a href="https://pay.kiwify.com.br/za05nt2" target="_blank" class="btn-header">Garantir Acesso</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>ENEM EM 24 HORAS<br><span class="highlight">O Sistema Que Transformou 15.247 Procrastinadores em Aprovados</span></h1>
+            <p class="subheadline">Descobri como anular completamente o esquecimento e hackear os padrões do ENEM em menos de 12 horas</p>
+            
+            <div class="proof-social">
+                <div class="proof-item">
+                    <span class="icon">✓</span>
+                    <span>Mais de 15.247 vestibulandos aprovados</span>
+                </div>
+                <div class="proof-item">
+                    <span class="icon">✓</span>
+                    <span>Taxa de sucesso: 94,7%</span>
+                </div>
+                <div class="proof-item">
+                    <span class="icon">✓</span>
+                    <span>Aumento médio: +287 pontos</span>
+                </div>
+            </div>
+
+            <div class="video-container">
+                <iframe src="https://player.vimeo.com/video/1134809671?h=8b61186ebe&autoplay=0&loop=0&title=0&byline=0&portrait=0" 
+                        frameborder="0" 
+                        allow="autoplay; fullscreen; picture-in-picture" 
+                        allowfullscreen
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px;">
+                </iframe>
+            </div>
+
+            <blockquote style="margin: 50px 0; font-style: italic; font-size: 20px; color: var(--text-gray); max-width: 700px; margin-left: auto; margin-right: auto;">
+                "Aumentei 340 pontos em 2 dias usando só os padrões"<br>
+                <strong style="color: var(--gold); font-style: normal; margin-top: 10px; display: block;">- Maria Santos, aprovada UFMG</strong>
+            </blockquote>
+
+            <a href="https://pay.kiwify.com.br/za05nt2" target="_blank" class="btn-primary">Quero Hackear o ENEM Agora</a>
+        </div>
+    </section>
+
+    <!-- Seção Problema -->
+    <section class="section">
+        <h2 class="section-title">Você Está Cometendo os Mesmos Erros de <span class="gold">97% dos Vestibulandos</span></h2>
+        <p class="section-subtitle">Identifique os erros que estão impedindo sua aprovação</p>
+        
+        <ul class="problem-list">
+            <li class="problem-item">
+                <span class="problem-icon">✗</span>
+                <span>Estudando conteúdo que não cai na prova</span>
+            </li>
+            <li class="problem-item">
+                <span class="problem-icon">✗</span>
+                <span>Perdendo 89% do que aprende em 48 horas (Curva de Ebbinghaus)</span>
+            </li>
+            <li class="problem-item">
+                <span class="problem-icon">✗</span>
+                <span>Entrando no ENEM "na sorte" como 847.000 candidatos</span>
+            </li>
+            <li class="problem-item">
+                <span class="problem-icon">✗</span>
+                <span>Competindo com quem estudou o ano todo SEM ESTRATÉGIA</span>
+            </li>
+        </ul>
+
+        <div class="stat-box">
+            <strong>RESULTADO:</strong> 143.700 zeraram redação ano passado.<br>
+            Apenas 12 tiraram nota 1000.
+        </div>
+
+        <p style="text-align: center; font-size: 24px; font-weight: 500; margin-top: 50px; color: var(--text-white); max-width: 800px; margin-left: auto; margin-right: auto;">
+            Enquanto você luta contra o esquecimento, existe um <strong style="color: var(--gold);">SISTEMA SECRETO...</strong>
+        </p>
+    </section>
+
+    <!-- Seção Solução -->
+    <section class="section section-alt">
+        <h2 class="section-title">Descoberta Que Mudou <span class="gold">Tudo</span></h2>
+        <p class="section-subtitle">O ENEM repete os MESMOS padrões há 25 anos! São as mesmas estruturas, mesmos tipos de pegadinha, mesmos formatos.</p>
+
+        <h2 class="section-title" style="margin-top: 80px;">NeuroHack ENEM - O Único Sistema Que:</h2>
+
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">📊</span>
+                </div>
+                <h3>Identifica os 10 Padrões Matemáticos</h3>
+                <p><span class="highlight">78% das questões</span></p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">📝</span>
+                </div>
+                <h3>Revela 5 Estruturas de Linguagens</h3>
+                <p><span class="highlight">Que se repetem SEMPRE</span></p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🔬</span>
+                </div>
+                <h3>Ensina 12 Fórmulas Científicas</h3>
+                <p><span class="highlight">85% dos problemas</span></p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">✍️</span>
+                </div>
+                <h3>3 Fórmulas de Redação</h3>
+                <p><span class="highlight">Funcionam para QUALQUER tema</span></p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🤖</span>
+                </div>
+                <h3>IA Personalizada</h3>
+                <p><span class="highlight">Monitora quando você esquece</span></p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🔄</span>
+                </div>
+                <h3>Spaced Repetition</h3>
+                <p><span class="highlight">Anula a Curva de Ebbinghaus</span></p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🎯</span>
+                </div>
+                <h3>Técnicas de Chute Estratégico</h3>
+                <p><span class="highlight">+47% de acerto</span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Transformação -->
+    <section class="section">
+        <h2 class="section-title">Em Apenas <span class="gold">12 Horas</span> Você Vai:</h2>
+        
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">⭐</span>
+                </div>
+                <h3>Dominar os Padrões</h3>
+                <p>Que se repetem TODO ano</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🧠</span>
+                </div>
+                <h3>Nunca Mais Dar "Branco"</h3>
+                <p>Nas questões</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">✅</span>
+                </div>
+                <h3>Acertar Questões</h3>
+                <p>Mesmo sem saber o conteúdo</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">📄</span>
+                </div>
+                <h3>Escrever Redação Nota 1000</h3>
+                <p>Com qualquer tema</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🎯</span>
+                </div>
+                <h3>Transformar Ansiedade</h3>
+                <p>Em foco laser</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">⚡</span>
+                </div>
+                <h3>Usar Vício em Dopamina</h3>
+                <p>Como arma neurológica</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 70px; padding: 50px; background: var(--black-card); border-radius: 12px; max-width: 900px; margin-left: auto; margin-right: auto; border: 2px solid var(--gold);">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 36px; margin-bottom: 20px; color: var(--gold);">Resultado Garantido</h3>
+            <p style="font-size: 22px; color: var(--text-gray); line-height: 1.8;">Zero esquecimento, máxima retenção, aprovação praticamente certa.</p>
+        </div>
+    </section>
+
+    <!-- Seção Resultados -->
+    <section class="section section-alt">
+        <h2 class="section-title">Resultados <span class="gold">Comprovados</span></h2>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">127</div>
+                <div class="stat-label">Aprovados USP</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">89</div>
+                <div class="stat-label">Aprovados UNICAMP</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">94</div>
+                <div class="stat-label">Aprovados UFMG</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">156</div>
+                <div class="stat-label">Aprovados MEDICINA</div>
+            </div>
+        </div>
+
+        <h3 style="text-align: center; font-family: 'Playfair Display', serif; font-size: 36px; margin: 70px 0 40px; color: var(--text-white);">Depoimentos Reais</h3>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Procrastinei o ano todo. Em 18h dominei os padrões e passei em Engenharia na USP!"</p>
+                <p class="testimonial-author">- Rafael M., 19 anos</p>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Não sabia nem começar a redação. Com as 3 fórmulas tirei 960!"</p>
+                <p class="testimonial-author">- Ana L., 18 anos</p>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Sistema me salvou. De 520 pontos fui para 847 em 3 dias!"</p>
+                <p class="testimonial-author">- Pedro S., 17 anos</p>
+            </div>
+        </div>
+
+        <div class="stats-grid" style="margin-top: 70px;">
+            <div class="stat-card">
+                <div class="stat-number">15.247</div>
+                <div class="stat-label">Usuários Transformados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">94,7%</div>
+                <div class="stat-label">Taxa de Aprovação</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">+287</div>
+                <div class="stat-label">Pontos em Média</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">89%</div>
+                <div class="stat-label">Redução de Ansiedade</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Conteúdo -->
+    <section class="section">
+        <h2 class="section-title">Acesso Completo <span class="gold">Inclui</span></h2>
+        <p class="section-subtitle">Tudo que você precisa para garantir sua aprovação no ENEM</p>
+
+        <!-- Sistema Principal -->
+        <div style="background: var(--black-card); padding: 50px; border-radius: 12px; max-width: 1000px; margin: 60px auto; border: 2px solid var(--gold); text-align: center;">
+            <div class="icon-wrapper" style="margin: 0 auto 30px;">
+                <span class="icon" style="font-size: 64px;">🏆</span>
+            </div>
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 36px; margin-bottom: 20px; color: var(--gold);">Acesso ao Maior Sistema de Aprovação Já Desenvolvido</h3>
+            <p style="font-size: 20px; color: var(--text-gray); line-height: 1.8; max-width: 800px; margin: 0 auto;">
+                Plataforma completa com mais de 15.247 aprovações comprovadas. O sistema mais avançado e eficaz já criado para o ENEM, com tecnologia de ponta e metodologia exclusiva.
+            </p>
+        </div>
+
+        <!-- Abas Premium -->
+        <h3 style="text-align: center; font-family: 'Playfair Display', serif; font-size: 32px; margin: 70px 0 40px; color: var(--gold);">Abas Premium Revolucionárias</h3>
+        
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">📊</span>
+                </div>
+                <h3>Dashboard Inteligente</h3>
+                <p>Acompanhe seu progresso em tempo real</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🎯</span>
+                </div>
+                <h3>Simulador de Prova</h3>
+                <p>Ambiente 100% idêntico ao ENEM</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">📈</span>
+                </div>
+                <h3>Analytics Avançado</h3>
+                <p>Análise profunda do seu desempenho</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🤖</span>
+                </div>
+                <h3>Assistente IA Personalizado</h3>
+                <p>Tutor inteligente disponível 24/7</p>
+            </div>
+        </div>
+
+        <!-- 8 E-Books -->
+        <h3 style="text-align: center; font-family: 'Playfair Display', serif; font-size: 32px; margin: 70px 0 40px; color: var(--gold);">8 E-Books Gratuitos com os Maiores Macetes e Hacks</h3>
+
+        <div class="content-grid">
+            <div class="content-card">
+                <h3>Redação Nota 1000</h3>
+                <p>8 módulos + fórmula coringa definitiva</p>
+            </div>
+            <div class="content-card">
+                <h3>Kit Revisão Express</h3>
+                <p>240 tópicos essenciais que realmente caem</p>
+            </div>
+            <div class="content-card">
+                <h3>Técnicas Inéditas de Chutes Inteligentes</h3>
+                <p>Métodos secretos para acertar sem saber</p>
+            </div>
+            <div class="content-card">
+                <h3>Aprendizado Acelerado Neurológico</h3>
+                <p>Técnicas comprovadas de memorização</p>
+            </div>
+            <div class="content-card">
+                <h3>Padrões do ENEM - 45% das Provas</h3>
+                <p>Padrões que se repetem todos os anos</p>
+            </div>
+            <div class="content-card">
+                <h3>150 Questões Recorrentes</h3>
+                <p>Com explicações detalhadas passo a passo</p>
+            </div>
+            <div class="content-card">
+                <h3>Macetes de Matemática</h3>
+                <p>Fórmulas rápidas e atalhos mentais</p>
+            </div>
+            <div class="content-card">
+                <h3>Hacks de Linguagens</h3>
+                <p>Estratégias para interpretação perfeita</p>
+            </div>
+        </div>
+
+        <!-- Padrões que Cobrem 45% -->
+        <div style="background: linear-gradient(135deg, var(--black-card) 0%, var(--gray) 100%); padding: 50px; border-radius: 12px; max-width: 1000px; margin: 70px auto; border: 2px solid var(--gold); text-align: center;">
+            <div class="icon-wrapper" style="margin: 0 auto 30px;">
+                <span class="icon" style="font-size: 64px;">🔄</span>
+            </div>
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 36px; margin-bottom: 20px; color: var(--gold);">Padrões que se Repetem Todos os Anos</h3>
+            <p style="font-size: 24px; color: var(--text-white); font-weight: 700; margin-bottom: 15px;">
+                Cobrem <span style="color: var(--gold); font-size: 32px;">45% das Provas</span>
+            </p>
+            <p style="font-size: 18px; color: var(--text-gray); line-height: 1.8; max-width: 800px; margin: 0 auto;">
+                Descubra os padrões matemáticos, linguísticos e científicos que aparecem ano após ano no ENEM. Domine esses padrões e garanta quase metade da prova automaticamente.
+            </p>
+        </div>
+
+        <!-- 3 Modelos de Redação Nota Mil -->
+        <h3 style="text-align: center; font-family: 'Playfair Display', serif; font-size: 32px; margin: 70px 0 40px; color: var(--gold);">3 Modelos de Redações Nota Mil</h3>
+
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">📝</span>
+                </div>
+                <h3>Modelo Argumentativo Clássico</h3>
+                <p>Estrutura perfeita para qualquer tema social</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">✍️</span>
+                </div>
+                <h3>Modelo Solução de Problemas</h3>
+                <p>Foco em propostas de intervenção eficazes</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🎯</span>
+                </div>
+                <h3>Modelo Comparativo Avançado</h3>
+                <p>Análise crítica com repertório sociocultural</p>
+            </div>
+        </div>
+
+        <!-- IA que Prevê Temas -->
+        <div style="background: var(--black-card); padding: 50px; border-radius: 12px; max-width: 1000px; margin: 70px auto; border: 2px solid var(--gold); text-align: center; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%); animation: pulse 3s infinite;"></div>
+            <div class="icon-wrapper" style="margin: 0 auto 30px; position: relative; z-index: 1;">
+                <span class="icon" style="font-size: 64px;">🤖</span>
+            </div>
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 36px; margin-bottom: 20px; color: var(--gold); position: relative; z-index: 1;">IA Desenvolvida: Previsão de 3 Possíveis Temas</h3>
+            <p style="font-size: 20px; color: var(--text-gray); line-height: 1.8; max-width: 800px; margin: 0 auto 30px; position: relative; z-index: 1;">
+                Nossa Inteligência Artificial analisa bancos de dados de pesquisas avançadas, tendências sociais, eventos recentes e padrões históricos do ENEM para prever os <strong style="color: var(--gold);">3 temas mais prováveis</strong> da redação deste ano.
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px; position: relative; z-index: 1;">
+                <div style="background: var(--gray); padding: 25px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                    <div style="font-size: 48px; margin-bottom: 10px;">📊</div>
+                    <p style="color: var(--text-white); font-weight: 600;">Análise de Dados</p>
+                    <p style="color: var(--text-gray); font-size: 14px;">25 anos de provas</p>
+                </div>
+                <div style="background: var(--gray); padding: 25px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                    <div style="font-size: 48px; margin-bottom: 10px;">🌐</div>
+                    <p style="color: var(--text-white); font-weight: 600;">Tendências Sociais</p>
+                    <p style="color: var(--text-gray); font-size: 14px;">Eventos recentes</p>
+                </div>
+                <div style="background: var(--gray); padding: 25px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                    <div style="font-size: 48px; margin-bottom: 10px;">🎯</div>
+                    <p style="color: var(--text-white); font-weight: 600;">Previsão Precisa</p>
+                    <p style="color: var(--text-gray); font-size: 14px;">3 temas mais prováveis</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Técnicas Inéditas de Chutes -->
+        <h3 style="text-align: center; font-family: 'Playfair Display', serif; font-size: 32px; margin: 70px 0 40px; color: var(--gold);">Técnicas Inéditas de Chutes Inteligentes</h3>
+
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🎲</span>
+                </div>
+                <h3>Método de Eliminação Avançado</h3>
+                <p>Elimine 2 alternativas com 90% de precisão</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">📐</span>
+                </div>
+                <h3>Padrão de Distribuição</h3>
+                <p>Identifique a sequência correta das respostas</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🔍</span>
+                </div>
+                <h3>Análise de Palavras-Chave</h3>
+                <p>Reconheça termos que indicam a resposta certa</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">⚡</span>
+                </div>
+                <h3>Chute Estratégico Temporal</h3>
+                <p>Quando e como chutar para maximizar pontos</p>
+            </div>
+        </div>
+
+        <!-- Tecnologia IA -->
+        <h3 style="text-align: center; font-family: 'Playfair Display', serif; font-size: 32px; margin: 70px 0 40px; color: var(--gold);">Tecnologia IA Avançada</h3>
+
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🔄</span>
+                </div>
+                <h3>Sistema de Spaced Repetition</h3>
+                <p>Personalizado para você - anula o esquecimento</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">⏰</span>
+                </div>
+                <h3>Cronobiologia Adaptada</h3>
+                <p>Estude no horário ideal do seu cérebro</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">📈</span>
+                </div>
+                <h3>Analytics Neurológicos</h3>
+                <p>Mapeamento completo do seu aprendizado</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🔍</span>
+                </div>
+                <h3>Diagnóstico de Esquecimento</h3>
+                <p>Identifica quando você vai esquecer antes que aconteça</p>
+            </div>
+        </div>
+
+        <!-- Ferramentas Extras -->
+        <h3 style="text-align: center; font-family: 'Playfair Display', serif; font-size: 32px; margin: 70px 0 40px; color: var(--gold);">Ferramentas Extras</h3>
+
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">📋</span>
+                </div>
+                <h3>Simulados 100% Padrão ENEM</h3>
+                <p>Questões reais de anos anteriores</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🎴</span>
+                </div>
+                <h3>Flashcards Inteligentes</h3>
+                <p>Sistema adaptativo de memorização</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">📅</span>
+                </div>
+                <h3>Cronograma dos Últimos Dias</h3>
+                <p>Planejamento otimizado para véspera</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-wrapper">
+                    <span class="icon">🧘</span>
+                </div>
+                <h3>Técnicas Anti-Ansiedade</h3>
+                <p>Controle emocional para o dia da prova</p>
+            </div>
+        </div>
+
+        <div class="price-comparison">
+            <p style="font-size: 18px; margin-bottom: 10px; color: var(--text-gray);">VALOR TOTAL DO CONTEÚDO:</p>
+            <p class="old-price">R$ 2.497</p>
+        </div>
+    </section>
+
+    <!-- Seção Oferta -->
+    <section id="oferta" class="offer-section">
+        <h2 class="section-title" style="color: var(--text-white);">Oferta Especial <span class="gold">"Última Chance"</span></h2>
+        <p class="section-subtitle" style="color: var(--text-gray);">De <span style="text-decoration: line-through; opacity: 0.6;">R$ 297</span> por apenas:</p>
+
+        <div class="price-comparison" style="color: var(--text-white);">
+            <div class="new-price">R$ 97,00</div>
+            <p style="font-size: 20px; margin-top: 10px; color: var(--text-gray);">OU 12x DE R$ 8,08</p>
+        </div>
+
+        <div style="background: var(--black-card); padding: 40px; border-radius: 12px; max-width: 800px; margin: 50px auto; border: 1px solid rgba(212, 175, 55, 0.3);">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 30px; color: var(--gold); text-align: center;">Bônus Exclusivos (só hoje)</h3>
+            <ul class="bonus-list">
+                <li class="bonus-item">🎁 Bônus 1: Kit SOS Véspera da Prova (R$ 197)</li>
+                <li class="bonus-item">🎁 Bônus 2: 50 Questões Que Mais Caem (R$ 97)</li>
+                <li class="bonus-item">🎁 Bônus 3: Meditação Foco Laser (R$ 67)</li>
+                <li class="bonus-item">🎁 Bônus 4: Grupo VIP Telegram (R$ 147)</li>
+            </ul>
+            <p style="margin-top: 30px; font-size: 20px; font-weight: 600; text-align: center; color: var(--text-white);">
+                VALOR TOTAL DOS BÔNUS: R$ 508<br>
+                <span style="font-size: 32px; color: var(--gold); font-weight: 900;">HOJE: GRÁTIS!</span>
+            </p>
+        </div>
+
+        <p style="font-size: 18px; margin-top: 40px; color: var(--text-gray);">
+            💳 PAGAMENTO 100% SEGURO<br>
+            🔒 Garantia de 7 dias ou devolvo o dobro
+        </p>
+    </section>
+
+    <!-- Seção Garantia -->
+    <section class="section section-alt">
+        <h2 class="section-title">Garantia Tripla <span class="gold">Blindada</span></h2>
+
+        <div class="guarantee-grid">
+            <div class="guarantee-card">
+                <div class="guarantee-icon">🛡️</div>
+                <h3>GARANTIA 1</h3>
+                <p>Se em 24h você não conseguir focar por 2h seguidas, devolvo 100% do dinheiro</p>
+            </div>
+            <div class="guarantee-card">
+                <div class="guarantee-icon">🛡️</div>
+                <h3>GARANTIA 2</h3>
+                <p>Se em 48h não ver evolução nos simulados, reembolso total + R$ 50 pelo tempo perdido</p>
+            </div>
+            <div class="guarantee-card">
+                <div class="guarantee-icon">🛡️</div>
+                <h3>GARANTIA 3</h3>
+                <p>Usou o sistema completo e não teve a aprovação desejada? Devolvo o DOBRO do valor investido</p>
+            </div>
+        </div>
+
+        <p style="text-align: center; font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 900; margin-top: 60px; color: var(--gold);">
+            RISCO ZERO PARA VOCÊ. TODO RISCO É MEU.
+        </p>
+    </section>
+
+    <!-- Seção Urgência -->
+    <section class="urgency-section">
+        <h2 class="urgency-title">Atenção: Sistema Sai do Ar <span class="gold">Automaticamente!</span></h2>
+        
+        <div style="font-size: 20px; margin: 40px 0; color: var(--text-gray); position: relative; z-index: 1;">
+            <p style="margin-bottom: 15px;">🚨 Este acesso só funciona até o ENEM 2024</p>
+            <p style="margin-bottom: 15px;">⏰ Depois da prova, sai do ar PARA SEMPRE</p>
+            <p style="margin-bottom: 15px;">🔒 Apenas 500 acessos liberados hoje</p>
+        </div>
+
+        <div class="spots-counter">
+            📊 Restam <span id="spots-left">73</span> vagas (contador em tempo real)
+        </div>
+
+        <div class="countdown-large">
+            ⏳ OFERTA EXPIRA EM: <span id="countdown-main">01:59:59</span>
+        </div>
+
+        <div style="background: var(--black-card); padding: 40px; border-radius: 12px; max-width: 900px; margin: 40px auto; font-size: 18px; border: 1px solid rgba(212, 175, 55, 0.3); position: relative; z-index: 1;">
+            <p style="margin-bottom: 20px; color: var(--text-white); font-weight: 600;">Depois desse prazo:</p>
+            <p style="margin-bottom: 10px; color: var(--text-gray);">❌ Preço volta para R$ 297</p>
+            <p style="margin-bottom: 10px; color: var(--text-gray);">❌ Bônus de R$ 508 são retirados</p>
+            <p style="color: var(--text-gray);">❌ Pode não ter mais vagas</p>
+        </div>
+    </section>
+
+    <!-- Seção Objeções -->
+    <section class="section">
+        <h2 class="section-title">Objeções <span class="gold">Destruídas</span></h2>
+
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>"MAS EU NÃO ESTUDEI NADA O ANO TODO..."</span>
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Perfeito! O sistema foi criado EXATAMENTE para isso. 94,7% dos aprovados eram procrastinadores como você.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>"E SE EU FOR BURRO DEMAIS?"</span>
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Não existe burro, existe método errado. O sistema funciona com QUALQUER tipo de cérebro.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>"NÃO TENHO TEMPO, SÃO SÓ 2 DIAS..."</span>
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Por isso criamos tudo para ser absorvido em 12 horas. Menos tempo que uma maratona de série.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>"E SE NÃO FUNCIONAR COMIGO?"</span>
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Garantia TRIPLA te protege. Zero risco. Se não funcionar, você GANHA dinheiro.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="cta-final">
+        <h2 class="cta-title">Sua Aprovação Está a <span class="gold">1 Clique</span> de Distância</h2>
+        
+        <p style="font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; margin: 40px 0; color: var(--text-white); position: relative; z-index: 1;">
+            DUAS ESCOLHAS. UMA DECISÃO. SEU DESTINO.
+        </p>
+
+        <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin: 50px 0; font-size: 20px; position: relative; z-index: 1;">
+            <div style="background: rgba(255,0,0,0.1); padding: 25px 30px; border-radius: 10px; border: 1px solid rgba(255,0,0,0.3); color: var(--text-gray);">
+                ❌ CONTINUAR procrastinando<br>e aceitar o fracasso
+            </div>
+            <div style="background: rgba(212, 175, 55, 0.1); padding: 25px 30px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.3); color: var(--text-gray);">
+                ✅ HACKEAR o ENEM<br>e garantir sua aprovação
+            </div>
+        </div>
+
+        <a href="https://pay.kiwify.com.br/za05nt2" target="_blank" class="btn-giant">👇 Garantir Aprovação Agora - R$ 97 👇</a>
+
+        <p style="font-size: 16px; margin-top: 30px; color: var(--text-gray); position: relative; z-index: 1;">
+            🔒 Pagamento 100% Seguro - SSL Certificado
+        </p>
+
+        <p style="font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; margin-top: 40px; color: var(--gold); position: relative; z-index: 1;">
+            ⚠️ ÚLTIMA CHAMADA: <span id="countdown-final">01:59:59</span>
+        </p>
+
+        <p style="font-size: 18px; margin-top: 40px; font-style: italic; color: var(--text-gray); position: relative; z-index: 1; max-width: 700px; margin-left: auto; margin-right: auto;">
+            P.S.: Enquanto você lê isso, outros 23 procrastinadores garantiram acesso nos últimos 10 minutos.
+        </p>
+
+        <p style="font-size: 20px; margin-top: 40px; font-weight: 500; color: var(--text-white); position: relative; z-index: 1; max-width: 800px; margin-left: auto; margin-right: auto;">
+            Não seja mais um que vai chorar na segunda chance.<br>
+            Sua família acredita em você. ACREDITE TAMBÉM.
+        </p>
+
+        <a href="https://pay.kiwify.com.br/za05nt2" target="_blank" style="display: inline-block; margin-top: 40px; padding: 18px 50px; background: rgba(212, 175, 55, 0.1); color: var(--gold); border: 2px solid var(--gold); border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 18px; transition: all 0.3s ease; position: relative; z-index: 1;">
+            💳 Dividir em 12x de R$ 8,08
+        </a>
+
+        <div class="security-badges">
+            <div>💬 Dúvidas? WhatsApp: (11) 99999-9999</div>
+            <div>🔒 Compra 100% Segura - SSL 256 bits</div>
+            <div>⚡ Acesso liberado em menos de 2 minutos</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#">Política de Privacidade</a>
+            <a href="#">Termos de Uso</a>
+            <a href="#">Contato</a>
+        </div>
+        <p style="margin-top: 30px; opacity: 0.8;">
+            © 2024 NeuroHack ENEM. Todos os direitos reservados.
+        </p>
+    </footer>
+
+    <script>
+        // Countdown Timer
+        function updateCountdown() {
+            let hours = 1;
+            let minutes = 59;
+            let seconds = 59;
+
+            function tick() {
+                seconds--;
+                if (seconds < 0) {
+                    seconds = 59;
+                    minutes--;
+                    if (minutes < 0) {
+                        minutes = 59;
+                        hours--;
+                        if (hours < 0) {
+                            hours = 0;
+                            minutes = 0;
+                            seconds = 0;
+                        }
+                    }
+                }
+
+                const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                
+                const headerCountdown = document.getElementById('countdown-header');
+                const mainCountdown = document.getElementById('countdown-main');
+                const finalCountdown = document.getElementById('countdown-final');
+
+                if (headerCountdown) headerCountdown.textContent = timeString;
+                if (mainCountdown) mainCountdown.textContent = timeString;
+                if (finalCountdown) finalCountdown.textContent = timeString;
+            }
+
+            tick();
+            setInterval(tick, 1000);
+        }
+
+        // Spots Counter (simulação)
+        function updateSpots() {
+            let spots = 73;
+            const spotsElement = document.getElementById('spots-left');
+            
+            setInterval(() => {
+                if (Math.random() > 0.7 && spots > 1) {
+                    spots--;
+                    if (spotsElement) spotsElement.textContent = spots;
+                }
+            }, 30000); // Atualiza a cada 30 segundos
+        }
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                const isActive = item.classList.contains('active');
+                
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer para animações
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        // Observar elementos para animação
+        document.querySelectorAll('.benefit-card, .testimonial-card, .stat-card, .content-card, .guarantee-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Inicialização
+        updateCountdown();
+        updateSpots();
+    </script>
+</body>
+</html>
